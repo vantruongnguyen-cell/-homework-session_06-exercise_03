@@ -6,8 +6,11 @@ services:
       POSTGRES_DB: banking_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password123
-    ports:
-      - "5432:5432"
+    # Đã gỡ bỏ ports 5432:5432 để bảo mật database khỏi truy cập từ bên ngoài
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - banking-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d banking_db"]
       interval: 5s
@@ -26,3 +29,12 @@ services:
     depends_on:
       core-db:
         condition: service_healthy
+    networks:
+      - banking-network
+
+networks:
+  banking-network:
+    driver: bridge
+
+volumes:
+  pg-data:
